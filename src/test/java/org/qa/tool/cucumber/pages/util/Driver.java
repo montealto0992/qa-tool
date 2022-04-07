@@ -5,7 +5,9 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import net.minidev.json.parser.ParseException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -25,6 +27,7 @@ public final class Driver {
     private WebDriver webDriver;
     private URL url;
     private DesiredCapabilities capabilities;
+
     private Driver() {
     }
 
@@ -40,14 +43,15 @@ public final class Driver {
 
         if("grid-remote".equalsIgnoreCase(browser)){
             setBrowserStack();
+
             this.webDriver = new Augmenter().augment(
                     new RemoteWebDriver(url, capabilities));
         } else if("grid-local".equalsIgnoreCase(browser)){
             try {
                 EdgeOptions edgeOptions =  new EdgeOptions();
-
+                ChromeOptions chromeOptions = new ChromeOptions();
                 this.webDriver = new Augmenter().augment(
-                        new RemoteWebDriver(new URL("http://192.168.100.20:4444/" ), edgeOptions));
+                            new RemoteWebDriver(new URL(server ), edgeOptions));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -61,7 +65,9 @@ public final class Driver {
 
         JSONParser parser = new JSONParser();
         JSONObject config = null;
+        JavascriptExecutor jse = (JavascriptExecutor)webDriver;
         try {
+
             config = (JSONObject) parser.parse(new FileReader("src/test/resources/conf/suite.conf.json"));
             JSONObject envs = (JSONObject) config.get("environments");
 
@@ -70,12 +76,21 @@ public final class Driver {
             setEnvCapabilities(envs, capabilities);
             setCommonCapabilities(config, capabilities);
 
-            String username = System.getenv("USERNAME");
-            String accessKey = System.getenv("ACCESS_KEY");
+            String username = System.getenv("BROWSERSTACK_USERNAME");
+            String accessKey = System.getenv("BROWSERSTACK_ACCESS_KEY");
 
             setLocal(capabilities, accessKey);
 
            url = new URL("http://" + username + ":" + accessKey + "@" + config.get("server") + "/wd/hub");
+
+            String title = webDriver.getTitle();
+
+            if (webDriver.getTitle().equals(title)) {
+                jse.executeScript("browserstack_executor: {\"action\": \"setSessionStatus\", \"arguments\": {\"status\": \"passed\", \"reason\": \"Title matched!\"}}");
+            }
+            else {
+                jse.executeScript("browserstack_executor: {\"action\": \"setSessionStatus\", \"arguments\": {\"status\":\"failed\", \"reason\": \"Title not matched\"}}");
+            }
         } catch (ParseException | FileNotFoundException e) {
             e.printStackTrace();
         } catch (MalformedURLException e) {

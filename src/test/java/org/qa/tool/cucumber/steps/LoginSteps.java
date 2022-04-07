@@ -30,6 +30,7 @@ public class LoginSteps extends BaseTest {
     public void verifyLogin() {
         String confirmationText = loginPage.getLoginConfirmation1();
         then(confirmationText).isEqualTo("Logout");
+        close();
     }
 
 
