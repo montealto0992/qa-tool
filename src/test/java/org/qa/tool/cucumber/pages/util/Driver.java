@@ -76,8 +76,8 @@ public final class Driver {
             setEnvCapabilities(envs, capabilities);
             setCommonCapabilities(config, capabilities);
 
-            String username = System.getenv("BROWSERSTACK_USERNAME");
-            String accessKey = System.getenv("BROWSERSTACK_ACCESS_KEY");
+            String username = System.getProperty("USERNAME");
+            String accessKey = System.getProperty("ACCESS_KEY");
 
             setLocal(capabilities, accessKey);
 
