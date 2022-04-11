@@ -1,6 +1,7 @@
 package org.qa.tool.cucumber.base;
 
 
+import io.cucumber.java.Scenario;
 import org.openqa.selenium.WebDriver;
 import org.qa.tool.cucumber.pages.util.Driver;
 
@@ -22,5 +23,10 @@ public class BaseTest {
         if( webDriver != null ) {
             webDriver.get(url);
         }
+
+    }
+
+    public void setName(Scenario scenario){
+
     }
 }

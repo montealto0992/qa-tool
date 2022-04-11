@@ -1,5 +1,5 @@
 {
-  "server": "hub.browserstack.com",
+  "server": "hub-cloud.browserstack.com",
   "capabilities": {
     "build": "browserstack-build-2",
     "name": "parallel_test",

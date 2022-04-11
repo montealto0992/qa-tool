@@ -12,12 +12,28 @@ import java.time.Duration;
 public class LoginPage extends BasePage {
 
     private String logoutXpath = "//*[@id=\"post-8\"]/div/div/nav/ul/li[6]/a";
+    private String logoXpath = "//a[normalize-space()='Powered by WordPress']";
     @FindBy(id = "username")
     private WebElement usernameTxt;
     @FindBy(id = "password")
     private WebElement passwordTxt;
     @FindBy(name = "login")
     private WebElement submitBtn;
+    @FindBy(id = "reg_username")
+    private WebElement usernameReg;
+    @FindBy(id = "reg_email")
+    private WebElement emailReg;
+    @FindBy(id = "reg_password")
+    private WebElement passwordReg;
+    @FindBy(name ="register")
+    private WebElement registerBtn;
+    @FindBy(name ="log")
+    private WebElement usernameLogin;
+    @FindBy(name = "pwd")
+    private WebElement passwordLogin;
+    @FindBy(name="wp-submit")
+    private WebElement submitLogin;
+
 
     public LoginPage() {
         url = "https://shop.demoqa.com/my-account/";
@@ -28,6 +44,20 @@ public class LoginPage extends BasePage {
         usernameTxt.sendKeys(username);
         passwordTxt.sendKeys(password);
         submitBtn.click();
+    }
+
+    public void register(String username, String password, String email){
+        usernameReg.sendKeys(username);
+        emailReg.sendKeys(email);
+        passwordReg.sendKeys(password);
+        registerBtn.click();
+
+    }
+
+    public void verifyLogin(String username, String password){
+            usernameLogin.sendKeys(username);
+            passwordLogin.sendKeys(password);
+            submitLogin.click();
     }
 
     public String getLoginConfirmation() {
@@ -44,4 +74,15 @@ public class LoginPage extends BasePage {
                 NoSuchElementException.class);
         return webElement.getText();
     }
+
+    public void getRegistrationConfirmation(){
+
+        WebElement webElement = PageWait.getInstance().waitForElementExist(By.xpath(logoXpath),
+                Duration.ofSeconds(20),
+                Duration.ofSeconds(5),
+                NoSuchElementException.class);
+
+    }
+
+
 }

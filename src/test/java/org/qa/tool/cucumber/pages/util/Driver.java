@@ -1,17 +1,25 @@
 package org.qa.tool.cucumber.pages.util;
 
 import com.browserstack.local.Local;
+import io.cucumber.java.Scenario;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import junit.framework.TestResult;
 import net.minidev.json.parser.ParseException;
+import org.assertj.core.internal.bytebuddy.implementation.bind.annotation.This;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.safari.SafariOptions;
+
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -27,6 +35,9 @@ public final class Driver {
     private WebDriver webDriver;
     private URL url;
     private DesiredCapabilities capabilities;
+    private MutableCapabilities sauceOptions;
+    private String scenarioName;
+
 
     private Driver() {
     }
@@ -38,15 +49,65 @@ public final class Driver {
     public WebDriver getWebDriver()  {
         if (this.webDriver != null)
             return this.webDriver;
+        String remote =  System.getProperty("REMOTE");
         String browser = DriverProperty.getProperty("browser");
         String server = DriverProperty.getProperty("server");
 
-        if("grid-remote".equalsIgnoreCase(browser)){
+        if("browserstack".equalsIgnoreCase(remote)){
             setBrowserStack();
 
             this.webDriver = new Augmenter().augment(
                     new RemoteWebDriver(url, capabilities));
-        } else if("grid-local".equalsIgnoreCase(browser)){
+        }else if("saucelabs".equalsIgnoreCase(remote)){
+            setSaucelabs();
+
+            String browserName = System.getProperty("BROWSER_NAME");
+            String browserVersion = System.getProperty("BROWSER_VERSION");
+            String platformName = System.getProperty("PLATFORM_NAME");
+
+            MutableCapabilities browserOptions = new MutableCapabilities();
+            browserOptions.setCapability("sauce:options", sauceOptions);
+            switch (browserName) {
+                case "SAFARI": {
+                    browserOptions = new SafariOptions();
+                    browserOptions.setCapability("platformName", platformName);
+                    browserOptions.setCapability("browserVersion",browserVersion);
+                    break;
+                }
+                case "FIREFOX": {
+                    browserOptions = new FirefoxOptions();
+                    browserOptions.setCapability("platformName",platformName);
+                    browserOptions.setCapability("browserVersion",browserVersion);
+                    break;
+                }
+                case "IE": {
+                    browserOptions = new InternetExplorerOptions();
+                    browserOptions.setCapability("platformName",platformName);
+                    browserOptions.setCapability("browserVersion",browserVersion);
+                    break;
+                }
+                case "EDGE": {
+                    browserOptions = new EdgeOptions();
+                    browserOptions.setCapability("platformName",platformName);
+                    browserOptions.setCapability("browserVersion",browserVersion);
+                    break;
+                }
+                default: {
+                    browserOptions = new ChromeOptions();
+                    browserOptions.setCapability("platformName",platformName);
+                    browserOptions.setCapability("browserVersion",browserVersion);
+                    break;
+                }
+            }
+
+            this.webDriver = new Augmenter().augment(
+                    new RemoteWebDriver(url, browserOptions));
+
+            TestResult result = new TestResult();
+            ((JavascriptExecutor) webDriver).executeScript("sauce:job-result=" + (result.wasSuccessful() ? "passed" : "failed"));
+
+        }
+        else if("grid-local".equalsIgnoreCase(browser)){
             try {
                 EdgeOptions edgeOptions =  new EdgeOptions();
                 ChromeOptions chromeOptions = new ChromeOptions();
@@ -60,6 +121,32 @@ public final class Driver {
         }
         return this.webDriver;
     }
+
+
+    private void setSaucelabs()   {
+
+        String username = System.getProperty("USERNAME");
+        String accessKey = System.getProperty("ACCESS_KEY");
+
+
+        sauceOptions = new MutableCapabilities();
+        sauceOptions.setCapability("name", "Successful Login");
+        sauceOptions.setCapability("tags", "tag1");
+        sauceOptions.setCapability("build", "build-1234");
+        sauceOptions.setCapability("username", username);
+        sauceOptions.setCapability("accessKey", accessKey);
+
+
+
+        try {
+            url = new URL("https://" + username + ":" + accessKey + "@ondemand.eu-central-1.saucelabs.com:443/wd/hub");
+            System.out.println(url.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     public void setBrowserStack() {
 
@@ -129,6 +216,12 @@ public final class Driver {
         Iterator it = envCapabilities.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
+            capabilities.setCapability(pair.getKey().toString(), pair.getValue().toString());
+        }
+        Map<String, String> envCapabilities1 = (Map<String, String>) envs.get("edge");
+        Iterator it1 = envCapabilities1.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it1.next();
             capabilities.setCapability(pair.getKey().toString(), pair.getValue().toString());
         }
     }
