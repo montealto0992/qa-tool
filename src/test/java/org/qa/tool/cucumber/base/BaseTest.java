@@ -9,6 +9,7 @@ public class BaseTest {
 
     protected WebDriver webDriver;
 
+
     public BaseTest() {
         webDriver = Driver.getInstance().getWebDriver();
     }
@@ -26,7 +27,5 @@ public class BaseTest {
 
     }
 
-    public void setName(Scenario scenario){
 
-    }
 }

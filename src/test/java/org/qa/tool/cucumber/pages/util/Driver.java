@@ -5,7 +5,6 @@ import io.cucumber.java.Scenario;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import junit.framework.TestResult;
 import net.minidev.json.parser.ParseException;
-import org.assertj.core.internal.bytebuddy.implementation.bind.annotation.This;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.openqa.selenium.JavascriptExecutor;
@@ -35,9 +34,7 @@ public final class Driver {
     private WebDriver webDriver;
     private URL url;
     private DesiredCapabilities capabilities;
-    private MutableCapabilities sauceOptions;
-    private String scenarioName;
-
+    private MutableCapabilities browserOptions;
 
     private Driver() {
     }
@@ -61,44 +58,7 @@ public final class Driver {
         }else if("saucelabs".equalsIgnoreCase(remote)){
             setSaucelabs();
 
-            String browserName = System.getProperty("BROWSER_NAME");
-            String browserVersion = System.getProperty("BROWSER_VERSION");
-            String platformName = System.getProperty("PLATFORM_NAME");
 
-            MutableCapabilities browserOptions = new MutableCapabilities();
-            browserOptions.setCapability("sauce:options", sauceOptions);
-            switch (browserName) {
-                case "SAFARI": {
-                    browserOptions = new SafariOptions();
-                    browserOptions.setCapability("platformName", platformName);
-                    browserOptions.setCapability("browserVersion",browserVersion);
-                    break;
-                }
-                case "FIREFOX": {
-                    browserOptions = new FirefoxOptions();
-                    browserOptions.setCapability("platformName",platformName);
-                    browserOptions.setCapability("browserVersion",browserVersion);
-                    break;
-                }
-                case "IE": {
-                    browserOptions = new InternetExplorerOptions();
-                    browserOptions.setCapability("platformName",platformName);
-                    browserOptions.setCapability("browserVersion",browserVersion);
-                    break;
-                }
-                case "EDGE": {
-                    browserOptions = new EdgeOptions();
-                    browserOptions.setCapability("platformName",platformName);
-                    browserOptions.setCapability("browserVersion",browserVersion);
-                    break;
-                }
-                default: {
-                    browserOptions = new ChromeOptions();
-                    browserOptions.setCapability("platformName",platformName);
-                    browserOptions.setCapability("browserVersion",browserVersion);
-                    break;
-                }
-            }
 
             this.webDriver = new Augmenter().augment(
                     new RemoteWebDriver(url, browserOptions));
@@ -129,14 +89,53 @@ public final class Driver {
         String accessKey = System.getProperty("ACCESS_KEY");
 
 
-        sauceOptions = new MutableCapabilities();
-        sauceOptions.setCapability("name", "Successful Login");
-        sauceOptions.setCapability("tags", "tag1");
-        sauceOptions.setCapability("build", "build-1234");
+        MutableCapabilities sauceOptions = new MutableCapabilities();
+        sauceOptions.setCapability("name", "successfully login");
+        //sauceOptions.setCapability("tags", "tag1");
+        //sauceOptions.setCapability("build", "build-1");
         sauceOptions.setCapability("username", username);
         sauceOptions.setCapability("accessKey", accessKey);
 
+        String browserName = System.getProperty("BROWSER_NAME");
+        String browserVersion = System.getProperty("BROWSER_VERSION");
+        String platformName = System.getProperty("PLATFORM_NAME");
 
+        browserOptions = new MutableCapabilities();
+
+        switch (browserName) {
+            case "SAFARI": {
+                browserOptions = new SafariOptions();
+                browserOptions.setCapability("platformName", platformName);
+                browserOptions.setCapability("browserVersion",browserVersion);
+                break;
+            }
+            case "FIREFOX": {
+                browserOptions = new FirefoxOptions();
+                browserOptions.setCapability("platformName",platformName);
+                browserOptions.setCapability("browserVersion",browserVersion);
+                break;
+            }
+            case "IE": {
+                browserOptions = new InternetExplorerOptions();
+                browserOptions.setCapability("platformName",platformName);
+                browserOptions.setCapability("browserVersion",browserVersion);
+                break;
+            }
+            case "EDGE": {
+                browserOptions = new EdgeOptions();
+                browserOptions.setCapability("platformName",platformName);
+                browserOptions.setCapability("browserVersion",browserVersion);
+                break;
+            }
+            case  "CHROME": {
+                browserOptions = new ChromeOptions();
+                browserOptions.setCapability("platformName",platformName);
+                browserOptions.setCapability("browserVersion",browserVersion);
+                break;
+            }
+        }
+
+        browserOptions.setCapability("sauce:options", sauceOptions);
 
         try {
             url = new URL("https://" + username + ":" + accessKey + "@ondemand.eu-central-1.saucelabs.com:443/wd/hub");
@@ -145,8 +144,6 @@ public final class Driver {
             e.printStackTrace();
         }
     }
-
-
 
     public void setBrowserStack() {
 

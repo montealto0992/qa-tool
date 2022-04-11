@@ -21,7 +21,6 @@ public class LoginSteps extends BaseTest {
     private LoginPage loginPage;
 
 
-
     @Given("User is in the login page")
     public void goToLogin() {
         loginPage = new LoginPage();
