@@ -103,31 +103,31 @@ public final class Driver {
         browserOptions = new MutableCapabilities();
 
         switch (browserName) {
-            case "SAFARI": {
+            case "safari": {
                 browserOptions = new SafariOptions();
                 browserOptions.setCapability("platformName", "Windows 10");
                 browserOptions.setCapability("browserVersion","latest");
                 break;
             }
-            case "FIREFOX": {
+            case "firefox": {
                 browserOptions = new FirefoxOptions();
                 browserOptions.setCapability("platformName", "Windows 10");
                 browserOptions.setCapability("browserVersion","latest");
                 break;
             }
-            case "IE": {
+            case "ie": {
                 browserOptions = new InternetExplorerOptions();
                 browserOptions.setCapability("platformName", "Windows 10");
                 browserOptions.setCapability("browserVersion","latest");
                 break;
             }
-            case "EDGE": {
+            case "edge": {
                 browserOptions = new EdgeOptions();
                 browserOptions.setCapability("platformName", "Windows 10");
                 browserOptions.setCapability("browserVersion","latest");
                 break;
             }
-            case  "CHROME": {
+            case  "chrome": {
                 browserOptions = new ChromeOptions();
                 browserOptions.setCapability("platformName", "Windows 10");
                 browserOptions.setCapability("browserVersion","latest");
