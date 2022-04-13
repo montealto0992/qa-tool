@@ -98,6 +98,14 @@ public final class Driver {
         sauceOptions.setCapability("username", username);
         sauceOptions.setCapability("accessKey", accessKey);
 
+
+        try {
+            url = new URL("https://" + username + ":" + accessKey + "@ondemand.eu-central-1.saucelabs.com:443/wd/hub");
+            System.out.println(url.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
         String browserName = System.getProperty("BROWSER_NAME");
 
         browserOptions = new MutableCapabilities();
@@ -133,22 +141,11 @@ public final class Driver {
                 browserOptions.setCapability("browserVersion","latest");
                 break;
             }
-            default: {
-                browserOptions = new ChromeOptions();
-                browserOptions.setCapability("platformName", "Windows 10");
-                browserOptions.setCapability("browserVersion","latest");
-                break;
-            }
+
         }
 
         browserOptions.setCapability("sauce:options", sauceOptions);
 
-        try {
-            url = new URL("https://" + username + ":" + accessKey + "@ondemand.eu-central-1.saucelabs.com:443/wd/hub");
-            System.out.println(url.toString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
     }
 
     public void setBrowserStack() {
@@ -210,7 +207,7 @@ public final class Driver {
     }
 
     private void setEnvCapabilities(JSONObject envs, DesiredCapabilities capabilities) {
-        String browserName = System.getProperty("browserName");
+        String browserName = System.getProperty("BROWSER_NAME");
         switch(browserName){
             case "chrome": {
                 Map<String, String> envCapabilities = (Map<String, String>) envs.get("chrome");
@@ -248,16 +245,7 @@ public final class Driver {
                 }
                 break;
             }
-            default:{
-                Map<String, String> envCapabilities = (Map<String, String>) envs.get("chrome");
-                Iterator it4 = envCapabilities.entrySet().iterator();
-                while (it4.hasNext()) {
-                    Map.Entry pair = (Map.Entry) it4.next();
-                    capabilities.setCapability(pair.getKey().toString(), pair.getValue().toString());
-                }
-                break;
 
-            }
         }
     }
 }
