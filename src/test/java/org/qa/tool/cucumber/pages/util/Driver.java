@@ -99,46 +99,44 @@ public final class Driver {
         sauceOptions.setCapability("accessKey", accessKey);
 
         String browserName = System.getProperty("BROWSER_NAME");
-        String browserVersion = System.getProperty("BROWSER_VERSION");
-        String platformName = System.getProperty("PLATFORM_NAME");
 
         browserOptions = new MutableCapabilities();
 
         switch (browserName) {
             case "SAFARI": {
                 browserOptions = new SafariOptions();
-                browserOptions.setCapability("platformName", platformName);
-                browserOptions.setCapability("browserVersion",browserVersion);
+                browserOptions.setCapability("platformName", "Windows 10");
+                browserOptions.setCapability("browserVersion","latest");
                 break;
             }
             case "FIREFOX": {
                 browserOptions = new FirefoxOptions();
-                browserOptions.setCapability("platformName",platformName);
-                browserOptions.setCapability("browserVersion",browserVersion);
+                browserOptions.setCapability("platformName", "Windows 10");
+                browserOptions.setCapability("browserVersion","latest");
                 break;
             }
             case "IE": {
                 browserOptions = new InternetExplorerOptions();
-                browserOptions.setCapability("platformName",platformName);
-                browserOptions.setCapability("browserVersion",browserVersion);
+                browserOptions.setCapability("platformName", "Windows 10");
+                browserOptions.setCapability("browserVersion","latest");
                 break;
             }
             case "EDGE": {
                 browserOptions = new EdgeOptions();
-                browserOptions.setCapability("platformName",platformName);
-                browserOptions.setCapability("browserVersion",browserVersion);
+                browserOptions.setCapability("platformName", "Windows 10");
+                browserOptions.setCapability("browserVersion","latest");
                 break;
             }
             case  "CHROME": {
                 browserOptions = new ChromeOptions();
-                browserOptions.setCapability("platformName",platformName);
-                browserOptions.setCapability("browserVersion",browserVersion);
+                browserOptions.setCapability("platformName", "Windows 10");
+                browserOptions.setCapability("browserVersion","latest");
                 break;
             }
             default: {
                 browserOptions = new ChromeOptions();
-                browserOptions.setCapability("platformName",platformName);
-                browserOptions.setCapability("browserVersion",browserVersion);
+                browserOptions.setCapability("platformName", "Windows 10");
+                browserOptions.setCapability("browserVersion","latest");
                 break;
             }
         }
