@@ -212,8 +212,8 @@ public final class Driver {
     }
 
     private void setEnvCapabilities(JSONObject envs, DesiredCapabilities capabilities) {
-        String env = System.getProperty("ENV");
-        switch(env){
+        String browserName = System.getProperty("browserName");
+        switch(browserName){
             case "chrome": {
                 Map<String, String> envCapabilities = (Map<String, String>) envs.get("chrome");
                 Iterator it = envCapabilities.entrySet().iterator();
