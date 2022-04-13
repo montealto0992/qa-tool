@@ -8,6 +8,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 
 import io.cucumber.plugin.event.Node;
+import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.MutableCapabilities;
 import org.qa.tool.cucumber.base.BaseTest;
@@ -35,6 +36,10 @@ public class LoginSteps extends BaseTest {
     public void verifyLogin() {
         String confirmationText = loginPage.getLoginConfirmation1();
         then(confirmationText).isEqualTo("Logout");
+
+    }
+    @After
+    public void tearDown(){
         close();
     }
 

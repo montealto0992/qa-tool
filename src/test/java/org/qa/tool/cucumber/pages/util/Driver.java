@@ -55,11 +55,13 @@ public final class Driver {
 
             this.webDriver = new Augmenter().augment(
                     new RemoteWebDriver(url, capabilities));
+
+            TestResult result = new TestResult();
+            JavascriptExecutor je = (JavascriptExecutor) webDriver;
+            je.executeScript("browserstack_executor: {\"action\": \"setSessionStatus\", \"arguments\": {\"status\": \""+ (result.wasSuccessful() ? "passed" : "failed") + "\"}}");
+
         }else if("saucelabs".equalsIgnoreCase(remote)){
             setSaucelabs();
-
-
-
             this.webDriver = new Augmenter().augment(
                     new RemoteWebDriver(url, browserOptions));
 
@@ -133,6 +135,12 @@ public final class Driver {
                 browserOptions.setCapability("browserVersion",browserVersion);
                 break;
             }
+            default: {
+                browserOptions = new ChromeOptions();
+                browserOptions.setCapability("platformName",platformName);
+                browserOptions.setCapability("browserVersion",browserVersion);
+                break;
+            }
         }
 
         browserOptions.setCapability("sauce:options", sauceOptions);
@@ -167,14 +175,7 @@ public final class Driver {
 
            url = new URL("http://" + username + ":" + accessKey + "@" + config.get("server") + "/wd/hub");
 
-            String title = webDriver.getTitle();
 
-            if (webDriver.getTitle().equals(title)) {
-                jse.executeScript("browserstack_executor: {\"action\": \"setSessionStatus\", \"arguments\": {\"status\": \"passed\", \"reason\": \"Title matched!\"}}");
-            }
-            else {
-                jse.executeScript("browserstack_executor: {\"action\": \"setSessionStatus\", \"arguments\": {\"status\":\"failed\", \"reason\": \"Title not matched\"}}");
-            }
         } catch (ParseException | FileNotFoundException e) {
             e.printStackTrace();
         } catch (MalformedURLException e) {
@@ -182,6 +183,8 @@ public final class Driver {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
 
     }
     private void setLocal(DesiredCapabilities capabilities, String accessKey) throws Exception {
@@ -209,17 +212,54 @@ public final class Driver {
     }
 
     private void setEnvCapabilities(JSONObject envs, DesiredCapabilities capabilities) {
-        Map<String, String> envCapabilities = (Map<String, String>) envs.get("chrome");
-        Iterator it = envCapabilities.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            capabilities.setCapability(pair.getKey().toString(), pair.getValue().toString());
-        }
-        Map<String, String> envCapabilities1 = (Map<String, String>) envs.get("edge");
-        Iterator it1 = envCapabilities1.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it1.next();
-            capabilities.setCapability(pair.getKey().toString(), pair.getValue().toString());
+        String env = System.getProperty("ENV");
+        switch(env){
+            case "chrome": {
+                Map<String, String> envCapabilities = (Map<String, String>) envs.get("chrome");
+                Iterator it = envCapabilities.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    capabilities.setCapability(pair.getKey().toString(), pair.getValue().toString());
+                }
+                break;
+            }
+            case "edge": {
+                Map<String, String> envCapabilities1 = (Map<String, String>) envs.get("edge");
+                Iterator it1 = envCapabilities1.entrySet().iterator();
+                while (it1.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it1.next();
+                    capabilities.setCapability(pair.getKey().toString(), pair.getValue().toString());
+                }
+                break;
+            }
+            case "firefox": {
+                Map<String, String> envCapabilities1 = (Map<String, String>) envs.get("firefox");
+                Iterator it2 = envCapabilities1.entrySet().iterator();
+                while (it2.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it2.next();
+                    capabilities.setCapability(pair.getKey().toString(), pair.getValue().toString());
+                }
+                break;
+            }
+            case "safari": {
+                Map<String, String> envCapabilities1 = (Map<String, String>) envs.get("safari");
+                Iterator it3 = envCapabilities1.entrySet().iterator();
+                while (it3.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it3.next();
+                    capabilities.setCapability(pair.getKey().toString(), pair.getValue().toString());
+                }
+                break;
+            }
+            default:{
+                Map<String, String> envCapabilities = (Map<String, String>) envs.get("chrome");
+                Iterator it4 = envCapabilities.entrySet().iterator();
+                while (it4.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it4.next();
+                    capabilities.setCapability(pair.getKey().toString(), pair.getValue().toString());
+                }
+                break;
+
+            }
         }
     }
 }

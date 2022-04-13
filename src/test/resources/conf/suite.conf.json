@@ -17,8 +17,8 @@
       "os": "OS X",
       "browser": "safari"
     },
-    "ie": {
-      "browser": "internet explorer"
+    "edge": {
+      "browser": "edge"
     }
   }
 }

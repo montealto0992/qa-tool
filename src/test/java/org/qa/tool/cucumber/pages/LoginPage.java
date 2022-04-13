@@ -19,6 +19,7 @@ public class LoginPage extends BasePage {
     private WebElement passwordTxt;
     @FindBy(name = "login")
     private WebElement submitBtn;
+
     @FindBy(id = "reg_username")
     private WebElement usernameReg;
     @FindBy(id = "reg_email")
@@ -27,9 +28,10 @@ public class LoginPage extends BasePage {
     private WebElement passwordReg;
     @FindBy(name ="register")
     private WebElement registerBtn;
+
     @FindBy(name ="log")
     private WebElement usernameLogin;
-    @FindBy(name = "pwd")
+    @FindBy(name ="pwd")
     private WebElement passwordLogin;
     @FindBy(name="wp-submit")
     private WebElement submitLogin;
@@ -82,6 +84,11 @@ public class LoginPage extends BasePage {
                 Duration.ofSeconds(5),
                 NoSuchElementException.class);
 
+    }
+
+    public void clickLogo() {
+        WebElement logo = webDriver.findElement(By.xpath("//*[@id='noo-site']/header/div[2]/div/div/div/div/a/img"));
+        logo.click();
     }
 
 
